@@ -1,17 +1,21 @@
-int num_harmonics = 3;
-float[][] X = new float[num_harmonics][400];
-float[][] Y = new float[num_harmonics][400];
+int num_harmonics = 1;
+int max_harmonics = 5;
+int dir = 1;
+int num_points = 400;
+float[][] X = new float[max_harmonics][num_points];
+float[][] Y = new float[max_harmonics][num_points];
 
+float rotation = 0.0;
 float angle = 0;
-int diam = 250;
-int radius = diam/2;
+float diam = 250;
+float radius = diam/2;
 
 void setup(){
   size(870, 800, OPENGL);
 }
 
 void draw() {
-  background(#FFFFFF);
+  background(#FFFFFF); //<>//
   strokeWeight(1);
   fill(#FFFFFF);
 
@@ -69,44 +73,41 @@ void draw() {
   }
 
   calc(angle);
-  strokeWeight(1.5);
-  for(int a = 1; a < 400; a++) {
+  for(int a = 1; a < num_points; a++) {
     // Upper trend lines
     float startx = 0, endx = 0;
     stroke(#FF0000);
+    strokeWeight(1);
     for (int harmonic = 0; harmonic < num_harmonics; ++harmonic) {
       startx += X[harmonic][a];
       endx += X[harmonic][a - 1];
  
-      if (harmonic == num_harmonics - 1)
+      if (harmonic == num_harmonics - 1) {
+        strokeWeight(2);
         stroke(#0000FF);
+      }
       line(225 + startx, 400 - a, 225 + endx, 401 - a);
     }
 
     // Right-hand trend lines
     float starty = 0, endy = 0;
     stroke(#FF0000);
+    strokeWeight(1);
     for (int harmonic = 0; harmonic < num_harmonics; ++harmonic) {
       starty += Y[harmonic][a];
       endy += Y[harmonic][a - 1];
-      if (harmonic == num_harmonics - 1)
+      if (harmonic == num_harmonics - 1) {
+        strokeWeight(2);
         stroke(#0000FF);
+      }
       line(450 + a, 600 + starty, 451 + a, 600 + endy);
     }
   }
 
-  // lines from circle intersections to lower x, y axes
-  // consider drawing these later, to overwrite projection lines.
-  stroke(#555555);
-  for (int harmonic = 0; harmonic < num_harmonics; ++harmonic) {
-    // gray vert. line to lower x axis.
-    line(x[harmonic], 600, x[harmonic], y[harmonic]);
-    // and to lower y axis
-    line(225, y[harmonic], x[harmonic], y[harmonic]);
-  }
-
-  fill(#FF0000);
+  // lines from lower x,y axes to projection lines
+  fill(#FF0000); //<>//
   stroke(#FF0000);
+  strokeWeight(1);
   for (int harmonic = 0; harmonic < num_harmonics; ++harmonic) {
     if (harmonic == num_harmonics - 1) {
       stroke(#0000FF);
@@ -124,8 +125,19 @@ void draw() {
     line(225, y[harmonic], 450, y[harmonic]);
   }
 
+  // lines from circle intersections to lower x, y axes
+  // consider drawing these later, to overwrite projection lines.
+  strokeWeight(1);
+  stroke(#555555);
+  for (int harmonic = 0; harmonic < num_harmonics; ++harmonic) {
+    // gray vert. line to lower x axis.
+    line(x[harmonic], 600, x[harmonic], y[harmonic]);
+    // and to lower y axis
+    line(225, y[harmonic], x[harmonic], y[harmonic]);
+  }
+
   // radius lines
-  strokeWeight(2);
+  strokeWeight(2.5);
   stroke(#000000);
   
   centerx = 225;
@@ -137,8 +149,17 @@ void draw() {
     centery = y[harmonic];
   }
   
-  angle -= 0.01;
-    
+  float delta = 0.02;
+  angle -= delta;
+  rotation += delta;
+  if (rotation > 2*PI) {
+    rotation -= 2*PI;
+    if (num_harmonics == 1)
+      dir = 1;
+    else if (num_harmonics == max_harmonics)
+      dir = -1;
+    num_harmonics += dir;
+  }
   //saveFrame("draw-####.png");
 }
 
@@ -146,7 +167,7 @@ void calc(float ang) {
   int amp = 1;
 
   for (int harmonic = 0; harmonic < num_harmonics; ++harmonic) {
-    for(int a = 0; a < 400; a++) {
+    for(int a = 0; a < num_points; a++) {
       float theta = a * 0.01 + ang;
       X[harmonic][a] = radius * cos(amp * theta) / amp;
       Y[harmonic][a] = radius * sin(amp * theta) / amp;
