@@ -1,40 +1,18 @@
-float[] X1 = new float[400];
-float[] Y1 = new float[400];
-float[] X2 = new float[400];
-float[] Y2 = new float[400];
-float[] X3 = new float[400];
-float[] Y3 = new float[400];
+int num_harmonics = 3;
+float[][] X = new float[num_harmonics][400];
+float[][] Y = new float[num_harmonics][400];
+
 float angle = 0;
 int diam = 250;
 int radius = diam/2;
-int ind = 0;
 
 void setup(){
   size(870, 800, OPENGL);
-  
 }
 
 void draw() {
   background(#FFFFFF);
 
-  ellipseMode(CENTER);
-  stroke(#FF0000);
-
-  // points on circles
-  float[] x = new float[10];
-  float[] y = new float[10];
-  
-  x[0] = 225 + X1[0];
-  y[0] = 600 + Y1[0];
-  x[1] = x[0] + radius/3 * cos(angle * 3);
-  y[1] = y[0] + radius/3 * sin(angle * 3);
-  x[2] = x[1] + radius/5 * cos(angle * 5);
-  y[2] = y[1] + radius/5 * sin(angle * 5);
-
-  // x, y, w, h
-  ellipse(225, 600, diam, diam);
-  ellipse(x[0], y[0], diam/3, diam/3);
-  
   /*Draw the axis lines.*/
   stroke(#000000);
   // upper horizontal projection line
@@ -50,30 +28,70 @@ void draw() {
   line(450, 600, 850, 600);
   // right vertical projection line
   line(450, 420, 450, 790);
+
+  ellipseMode(CENTER);
+  stroke(#FF0000);
+
+  // points on circles
+  float[] x = new float[num_harmonics];
+  float[] y = new float[num_harmonics];
   
-  /*Calculate the value of function and draw them*/
-  calc(angle);
-  strokeWeight(1.5);
-  for(int a = 1; a < 400; a++){
-    // Upper trend lines
-    stroke(#FF0000);
-    line(225 + X1[a], 400 - a, 225 + X1[a-1], 401 - a);
-    line(225 + X2[a] + X1[a], 400-a, 225 + X2[a-1] + X1[a - 1], 401-a);
-
-    stroke(#0000FF);
-    line(225 + X3[a] + X2[a] + X1[a], 400-a, 225 + X3[a - 1] + X2[a-1] + X1[a - 1], 401-a);
+  float centerx = 225;
+  float centery = 600;
+  int amp = 1;
+  for (int harmonic = 0; harmonic < num_harmonics; ++harmonic) {
+    x[harmonic] = centerx + radius * cos(angle * amp) / amp;
+    y[harmonic] = centery + radius * sin(angle * amp) / amp;
     
-    // right-hand trend lines
-    stroke(#FF0000);
-    line(450 + a, 600 + Y1[a], 451 + a, 600 + Y1[a-1]);
-    line(450 + a, 600 + Y2[a] + Y1[a], 451 + a, 600 + Y2[a-1] + Y1[a-1]);
-
-    stroke(#0000FF);
-    line(450 + a, 600 + Y3[a] + Y2[a] + Y1[a], 451 + a, 600 + Y3[a - 1] + Y2[a-1] + Y1[a-1]);
+    amp += 2;
+    centerx = x[harmonic];
+    centery = y[harmonic];
   }
 
-  stroke(#0000FF);
-  ellipse(x[1], y[1], diam/5, diam/5);
+  // Draw the circles. The first one is stationary; the others' centers
+  // are on the next-larger circle's circumference.
+  amp = 1;
+  for (int harmonic = 0; harmonic < num_harmonics; ++harmonic) {
+    if (harmonic == 0) {
+      centerx = 225;
+      centery = 600;
+    } else {
+      centerx = x[harmonic - 1];
+      centery = y[harmonic - 1];
+    }
+    if (harmonic == num_harmonics - 1)
+      stroke(#0000FF);
+
+    ellipse(centerx, centery, diam/amp, diam/amp);
+    amp += 2;
+  }
+
+  calc(angle);
+  strokeWeight(1.5);
+  for(int a = 1; a < 400; a++) {
+    // Upper trend lines
+    float startx = 0, endx = 0;
+    stroke(#FF0000);
+    for (int harmonic = 0; harmonic < num_harmonics; ++harmonic) {
+      startx += X[harmonic][a];
+      endx += X[harmonic][a - 1];
+ 
+      if (harmonic == num_harmonics - 1)
+        stroke(#0000FF);
+      line(225 + startx, 400 - a, 225 + endx, 401 - a);
+    }
+
+    float starty = 0, endy = 0;
+    stroke(#FF0000);
+    for (int harmonic = 0; harmonic < num_harmonics; ++harmonic) {
+      starty += Y[harmonic][a];
+      endy += Y[harmonic][a - 1];
+      if (harmonic == num_harmonics - 1)
+        stroke(#0000FF);
+      line(450 + a, 600 + starty, 451 + a, 600 + endy);
+    }
+  }
+
 
   // gray vert. line to lower x axis.
   stroke(#555555);
@@ -97,7 +115,7 @@ void draw() {
   line(x[0], 400, x[0], 600);
   line(x[1], 400, x[1], 600);
 
-  // dots for the right-hand project
+  // dots for the right-hand projection
   ellipse(225, y[0], 7, 7);
   ellipse(450, y[0], 7, 7);
   ellipse(225, y[1], 7, 7);
@@ -132,24 +150,21 @@ void draw() {
   fill(#0000FF);
   
   strokeWeight(1);
-  angle -= 0.03;
+  angle -= 0.02;
     
   fill(#FFFFFF);
   //saveFrame("draw-####.png");
 }
 
 void calc(float ang) {
-  for(int a = 0; a < 400; a++) {
-    float theta = a * 0.01 + ang;
-    X1[a] = radius * cos(theta);
-    Y1[a] = radius * sin(theta);
-    
-    float theta3 = 3 * theta;
-    X2[a] = radius/3 * cos(theta3);
-    Y2[a] = radius/3 * sin(theta3);
+  int amp = 1;
 
-    float theta5 = 5 * theta;
-    X3[a] = radius/5 * cos(theta5);
-    Y3[a] = radius/5 * sin(theta5);
+  for (int harmonic = 0; harmonic < num_harmonics; ++harmonic) {
+    for(int a = 0; a < 400; a++) {
+      float theta = a * 0.01 + ang;
+      X[harmonic][a] = radius * cos(amp * theta) / amp;
+      Y[harmonic][a] = radius * sin(amp * theta) / amp;
+    }
+    amp += 2;
   }
 }
