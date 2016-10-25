@@ -12,6 +12,8 @@ void setup(){
 
 void draw() {
   background(#FFFFFF);
+  strokeWeight(1);
+  fill(#FFFFFF);
 
   /*Draw the axis lines.*/
   stroke(#000000);
@@ -81,6 +83,7 @@ void draw() {
       line(225 + startx, 400 - a, 225 + endx, 401 - a);
     }
 
+    // Right-hand trend lines
     float starty = 0, endy = 0;
     stroke(#FF0000);
     for (int harmonic = 0; harmonic < num_harmonics; ++harmonic) {
@@ -92,67 +95,50 @@ void draw() {
     }
   }
 
-
-  // gray vert. line to lower x axis.
+  // lines from circle intersections to lower x, y axes
+  // consider drawing these later, to overwrite projection lines.
   stroke(#555555);
-  line(x[0], 600, x[0], y[0]);
-  line(x[1], 600, x[1], y[1]);
-  line(x[2], 600, x[2], y[2]);
-  
-  // and to lower y axis
-  line(225, y[0], x[0], y[0]);
-  line(225, y[1], x[1], y[1]);
-  line(225, y[2], x[2], y[2]);
+  for (int harmonic = 0; harmonic < num_harmonics; ++harmonic) {
+    // gray vert. line to lower x axis.
+    line(x[harmonic], 600, x[harmonic], y[harmonic]);
+    // and to lower y axis
+    line(225, y[harmonic], x[harmonic], y[harmonic]);
+  }
 
   fill(#FF0000);
   stroke(#FF0000);
-  ellipse(x[0], 400, 7, 7);
-  ellipse(x[0], 600, 7, 7);
-  ellipse(x[1], 400, 7, 7);
-  ellipse(x[1], 600, 7, 7);
+  for (int harmonic = 0; harmonic < num_harmonics; ++harmonic) {
+    if (harmonic == num_harmonics - 1) {
+      stroke(#0000FF);
+      fill(#0000FF);
+    }
 
-  // red lines connecting the lower and upper red dots.
-  line(x[0], 400, x[0], 600);
-  line(x[1], 400, x[1], 600);
+    // dots for the upper projection
+    ellipse(x[harmonic], 400, 7, 7);
+    ellipse(x[harmonic], 600, 7, 7);
+    // red lines connecting the lower and upper red dots.
+    line(x[harmonic], 400, x[harmonic], 600);
 
-  // dots for the right-hand projection
-  ellipse(225, y[0], 7, 7);
-  ellipse(450, y[0], 7, 7);
-  ellipse(225, y[1], 7, 7);
-  ellipse(450, y[1], 7, 7);
+    ellipse(225, y[harmonic], 7, 7);
+    ellipse(450, y[harmonic], 7, 7);
+    line(225, y[harmonic], 450, y[harmonic]);
+  }
 
-  line(225, y[0], 450, y[0]);
-  line(225, y[1], 450, y[1]);
-
-  stroke(#0000FF);
-  fill(#0000FF);
-
-  // upper
-  ellipse(x[2], 400, 7, 7);
-  ellipse(x[2], 600, 7, 7);
-  line(x[2], 400, x[2], 600);
-
-  // right
-  ellipse(225, y[2], 7, 7);
-  ellipse(450, y[2], 7, 7);
-  line(225, y[2], 450, y[2]);
-
-  stroke(#0000FF);
-  fill(#FF00FF);
-
+  // radius lines
   strokeWeight(2);
   stroke(#000000);
   
-  // radius lines
-  line(225, 600, x[0], y[0]);
-  line(x[0], y[0], x[1], y[1]);
-  line(x[1], y[1], x[2], y[2]);
-  fill(#0000FF);
+  centerx = 225;
+  centery = 600;
+  for (int harmonic = 0; harmonic < num_harmonics; ++harmonic) {
+    line(centerx, centery, x[harmonic], y[harmonic]);
   
-  strokeWeight(1);
-  angle -= 0.02;
+    centerx = x[harmonic];
+    centery = y[harmonic];
+  }
+  
+  angle -= 0.01;
     
-  fill(#FFFFFF);
   //saveFrame("draw-####.png");
 }
 
