@@ -5,7 +5,7 @@ float[] Y2 = new float[400];
 float[] X3 = new float[400];
 float[] Y3 = new float[400];
 float angle = 0;
-int diam = 150;
+int diam = 250;
 int radius = diam/2;
 int ind = 0;
 
