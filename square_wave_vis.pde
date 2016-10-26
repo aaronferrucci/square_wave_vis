@@ -1,4 +1,4 @@
-int num_harmonics = 1;
+int num_harmonics = 5;
 int max_harmonics = 10;
 int num_points = 400;
 float[][] X = new float[max_harmonics][num_points];
@@ -16,9 +16,9 @@ void setup(){
 void draw() {
   background(#FFFFFF); //<>//
   
-  textSize(128);
-  fill(#000000);
-  text(1 + (num_harmonics - 1) * 2, 600, 200);
+  //textSize(128);
+  //fill(#000000);
+  //text(1 + (num_harmonics - 1) * 2, 600, 200);
 
   strokeWeight(1);
   fill(#FFFFFF);
@@ -155,15 +155,15 @@ void draw() {
     centery = y[harmonic];
   }
   
-  float delta = 0.02;
+  float delta = 0.01;
   angle -= delta;
   rotation += delta;
   if (rotation > 2*PI) {
     rotation -= 2*PI;
-    if (num_harmonics == max_harmonics)
-      num_harmonics = 1;
-    else
-      num_harmonics++;
+    //if (num_harmonics == max_harmonics)
+    //  num_harmonics = 1;
+    //else
+    //  num_harmonics++;
   }
   //saveFrame("draw-####.png");
 }
