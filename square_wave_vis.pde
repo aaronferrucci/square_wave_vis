@@ -1,13 +1,12 @@
 int num_harmonics = 1;
-int max_harmonics = 5;
-int dir = 1;
+int max_harmonics = 10;
 int num_points = 400;
 float[][] X = new float[max_harmonics][num_points];
 float[][] Y = new float[max_harmonics][num_points];
 
 float rotation = 0.0;
 float angle = 0;
-float diam = 250;
+float diam = 200;
 float radius = diam/2;
 
 void setup(){
@@ -16,6 +15,11 @@ void setup(){
 
 void draw() {
   background(#FFFFFF); //<>//
+  
+  textSize(128);
+  fill(#000000);
+  text(1 + (num_harmonics - 1) * 2, 600, 200);
+
   strokeWeight(1);
   fill(#FFFFFF);
 
@@ -65,8 +69,10 @@ void draw() {
       centerx = x[harmonic - 1];
       centery = y[harmonic - 1];
     }
-    if (harmonic == num_harmonics - 1)
+    if (harmonic == num_harmonics - 1) {
       stroke(#0000FF);
+      strokeWeight(2);
+    }
 
     ellipse(centerx, centery, diam/amp, diam/amp);
     amp += 2;
@@ -154,11 +160,10 @@ void draw() {
   rotation += delta;
   if (rotation > 2*PI) {
     rotation -= 2*PI;
-    if (num_harmonics == 1)
-      dir = 1;
-    else if (num_harmonics == max_harmonics)
-      dir = -1;
-    num_harmonics += dir;
+    if (num_harmonics == max_harmonics)
+      num_harmonics = 1;
+    else
+      num_harmonics++;
   }
   //saveFrame("draw-####.png");
 }
