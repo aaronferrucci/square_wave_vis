@@ -1,9 +1,9 @@
 
 int num_harmonics = 6;
-int max_harmonics = 10;
 int num_points = 400;
-float[][] X = new float[max_harmonics][num_points];
-float[][] Y = new float[max_harmonics][num_points];
+float[][] X = new float[num_harmonics][num_points];
+float[][] Y = new float[num_harmonics][num_points];
+boolean drawing = false;
 
 float rotation = 0.0;
 float angle = 0;
@@ -159,10 +159,13 @@ void draw() {
   float delta = 2*PI / 628;
   angle -= delta;
   rotation += delta;
-  if (rotation > 2*PI)
-    exit();
-    
-  saveFrame("draw-####.png");
+  
+  if (drawing) {
+    if (rotation > 2*PI)
+      exit();
+  
+    saveFrame("draw-####.png");
+  }
 }
 
 void calc(float ang) {
