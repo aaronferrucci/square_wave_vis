@@ -8,3 +8,5 @@ How-to:
   3. vpxenc --good --cpu-used=0 --auto-alt-ref=1 --lag-in-frames=16 --passes=2 --threads=2 --target-bitrate=3000 -o square_wave_viz.webm draw.yuv
   4. Upload the webm file to gfycat.com
 
+https://gfycat.com/SpiritedBountifulAcaciarat
+
