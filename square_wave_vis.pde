@@ -3,7 +3,7 @@ int num_harmonics = 6;
 int num_points = 400;
 float[][] X = new float[num_harmonics][num_points];
 float[][] Y = new float[num_harmonics][num_points];
-boolean drawing = true;
+boolean drawing = false;
 
 float rotation = 0.0;
 float angle = 0;
