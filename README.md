@@ -2,6 +2,7 @@
 Visualize sum of sinusoids synthesis of a square wave.
 
 How-to:
+  1. Set variable 'drawing' to true
   1. Run square_wave_vis.pde in the Processing IDE to generate the draw-###.png
      files
   2. png2yuv -I p -f 30 -b 1 -n 629 -j draw-%04d.png > draw.yuv
